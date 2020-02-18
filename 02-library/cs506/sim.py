@@ -4,6 +4,15 @@ def euclidean_dist(x, y):
     return math.sqrt(sum([(a - b) ** 2 for a, b in zip(x, y)]))
     # raise NotImplementedError()
 
+    '''
+    if len(x) != len(y):
+        raise ValueError("not good values")
+    res = 0
+    for i in range(len(x)):
+        res += (x[i] - y[i]) ** 2
+    return res ** (1/2)
+    '''
+
 def manhattan_dist(x, y):
     return sum(abs(a-b) for a,b in zip(x,y))
     # raise NotImplementedError()
