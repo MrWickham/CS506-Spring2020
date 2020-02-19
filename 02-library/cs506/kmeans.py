@@ -11,7 +11,10 @@ def point_avg(points):
     
     Returns a new point which is the center of all the points.
     """
-    raise NotImplementedError()
+    n = len(points)
+    x = sum([p[0] for p in points]) / n
+    y = sum([p[1] for p in points]) / n
+    return [x, y]
 
 
 def update_centers(dataset, assignments):
@@ -21,8 +24,16 @@ def update_centers(dataset, assignments):
     Compute the center for each of the assigned groups.
     Return `k` centers in a list
     """
-    raise NotImplementedError()
+    k = max(assignments) + 1
+    clusters = [[] for i in range(k)]
+    for i, index in enumerate(assignments):
+        clusters[index].append(dataset[i])
 
+    new_centers = []
+    for cluster in clusters:
+        new_centers.append(point_avg(cluster))
+
+    return new_centers
 
 def assign_points(data_points, centers):
     """
@@ -44,7 +55,7 @@ def distance(a, b):
     """
     Returns the Euclidean distance between a and b
     """
-    raise NotImplementedError()
+    return sum([(a - b) ** 2 for a, b in zip(a, b)]) ** 0.5
 
 
 def generate_k(dataset, k):
@@ -52,15 +63,23 @@ def generate_k(dataset, k):
     Given `data_set`, which is an array of arrays,
     return a random set of k points from the data_set
     """
-    raise NotImplementedError()
+    return random.sample(dataset, k)
 
 
 def cost_function(clustering):
+    cost = 0
+    for idx in clustering:
+        center = point_avg(clustering[idx])
+        cost += sum([distance(center, p) ** 2 for p in clustering[idx]])
+
+    return cost
+
+
+def generate_k_pp(dataset, k):
     raise NotImplementedError()
 
 
-def k_means(dataset, k):
-    k_points = generate_k(dataset, k)
+def do_lloyds_algo(dataset, k_points):
     assignments = assign_points(dataset, k_points)
     old_assignments = None
     while assignments != old_assignments:
@@ -71,3 +90,22 @@ def k_means(dataset, k):
     for assignment, point in zip(assignments, dataset):
         clustering[assignment].append(point)
     return clustering
+
+
+def k_means(dataset, k):
+    k_points = generate_k(dataset, k)
+    return do_lloyds_algo(dataset, k_points)
+
+
+
+def k_means_pp(dataset, k):
+    k_points = generate_k_pp(dataset, k)
+    return do_lloyds_algo(dataset, k_points)
+
+
+filepath = "/mnt/c/lwh/cs/20spring/506/CS506-Spring2020/02-library/tests/test_files/dataset_1_k_is_2_0.csv"
+
+from cs506 import read
+dataset = read.read_csv(filepath)
+
+k_means(dataset, 5)
