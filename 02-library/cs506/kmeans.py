@@ -79,7 +79,7 @@ def generate_k_pp(dataset, k):
     raise NotImplementedError()
 
 
-def do_lloyds_algo(dataset, k_points):
+def _do_lloyds_algo(dataset, k_points):
     assignments = assign_points(dataset, k_points)
     old_assignments = None
     while assignments != old_assignments:
@@ -94,13 +94,13 @@ def do_lloyds_algo(dataset, k_points):
 
 def k_means(dataset, k):
     k_points = generate_k(dataset, k)
-    return do_lloyds_algo(dataset, k_points)
+    return _do_lloyds_algo(dataset, k_points)
 
 
 
 def k_means_pp(dataset, k):
     k_points = generate_k_pp(dataset, k)
-    return do_lloyds_algo(dataset, k_points)
+    return _do_lloyds_algo(dataset, k_points)
 
 
 filepath = "/mnt/c/lwh/cs/20spring/506/CS506-Spring2020/02-library/tests/test_files/dataset_1_k_is_2_0.csv"
