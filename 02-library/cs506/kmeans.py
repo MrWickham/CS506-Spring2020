@@ -57,6 +57,9 @@ def distance(a, b):
     """
     return sum([(a - b) ** 2 for a, b in zip(a, b)]) ** 0.5
 
+def distance_squared(a, b):
+    return sum([(a - b) ** 2 for a, b in zip(a, b)])
+
 
 def generate_k(dataset, k):
     """
@@ -70,16 +73,29 @@ def cost_function(clustering):
     cost = 0
     for idx in clustering:
         center = point_avg(clustering[idx])
-        cost += sum([distance(center, p) ** 2 for p in clustering[idx]])
+        cost += sum([distance_squared(center, p) for p in clustering[idx]])
 
     return cost
 
 
 def generate_k_pp(dataset, k):
-    raise NotImplementedError()
+    center = random.choice(dataset)
+    k_points = [center]
+
+    while len(k_points) < k:
+        prob = []
+        for point in dataset:
+            prob.append(distance_squared(center, point))
+        
+        prob = [p/sum(prob) for p in prob]
+        center = random.choices(dataset, prob)[0]
+
+        k_points.append(center)
+
+    return k_points
 
 
-def do_lloyds_algo(dataset, k_points):
+def _do_lloyds_algo(dataset, k_points):
     assignments = assign_points(dataset, k_points)
     old_assignments = None
     while assignments != old_assignments:
@@ -94,18 +110,10 @@ def do_lloyds_algo(dataset, k_points):
 
 def k_means(dataset, k):
     k_points = generate_k(dataset, k)
-    return do_lloyds_algo(dataset, k_points)
+    return _do_lloyds_algo(dataset, k_points)
 
 
 
 def k_means_pp(dataset, k):
     k_points = generate_k_pp(dataset, k)
-    return do_lloyds_algo(dataset, k_points)
-
-
-filepath = "/mnt/c/lwh/cs/20spring/506/CS506-Spring2020/02-library/tests/test_files/dataset_1_k_is_2_0.csv"
-
-from cs506 import read
-dataset = read.read_csv(filepath)
-
-k_means(dataset, 5)
+    return _do_lloyds_algo(dataset, k_points)
